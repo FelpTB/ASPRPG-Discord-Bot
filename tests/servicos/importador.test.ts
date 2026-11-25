@@ -17,7 +17,7 @@ beforeAll(async () => {
 }, 60_000);
 afterAll(async () => banco?.fechar());
 beforeEach(async () => {
-  await banco.sql`truncate assinantes, vinculos, importacoes, eventos`;
+  await banco.sql`truncate associados.assinantes, associados.vinculos, associados.importacoes, associados.eventos`;
 });
 
 function novoImportador(agora = () => new Date('2026-11-25T12:00:00Z')) {

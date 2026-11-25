@@ -19,7 +19,7 @@ beforeAll(async () => {
 }, 60_000);
 afterAll(async () => banco?.fechar());
 beforeEach(async () => {
-  await banco.sql`truncate assinantes, vinculos, codigos_verificacao, pedidos_codigo, eventos`;
+  await banco.sql`truncate associados.assinantes, associados.vinculos, associados.codigos_verificacao, associados.pedidos_codigo, associados.eventos`;
   const base = new Date('2026-11-25T12:00:00Z');
   await repo.upsertAssinantes(
     [

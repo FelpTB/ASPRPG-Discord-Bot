@@ -1,4 +1,6 @@
-create table assinantes (
+-- Tudo do bot fica no schema associados, isolado de outros projetos no mesmo Supabase.
+-- O schema não é exposto pela API REST do Supabase (só public é, por padrão).
+create table associados.assinantes (
   email_hash    text primary key,
   email_cifrado text not null,
   nome          text,
@@ -7,14 +9,14 @@ create table assinantes (
   importado_em  timestamptz not null
 );
 
-create table vinculos (
+create table associados.vinculos (
   discord_id    text primary key,
   email_hash    text not null unique,
   vinculado_em  timestamptz not null default now(),
   inativo_desde timestamptz
 );
 
-create table codigos_verificacao (
+create table associados.codigos_verificacao (
   discord_id  text primary key,
   email_hash  text not null,
   codigo_hash text not null,
@@ -22,23 +24,23 @@ create table codigos_verificacao (
   tentativas  int not null default 0
 );
 
-create table pedidos_codigo (
+create table associados.pedidos_codigo (
   id         bigserial primary key,
   discord_id text not null,
   criado_em  timestamptz not null
 );
-create index pedidos_codigo_discord_idx on pedidos_codigo (discord_id, criado_em);
+create index pedidos_codigo_discord_idx on associados.pedidos_codigo (discord_id, criado_em);
 
-create table eventos (
+create table associados.eventos (
   id         bigserial primary key,
   quando     timestamptz not null default now(),
   discord_id text,
   tipo       text not null,
   detalhe    text
 );
-create index eventos_discord_idx on eventos (discord_id, quando desc);
+create index eventos_discord_idx on associados.eventos (discord_id, quando desc);
 
-create table importacoes (
+create table associados.importacoes (
   id         bigserial primary key,
   quando     timestamptz not null default now(),
   admin_id   text not null,
@@ -49,9 +51,9 @@ create table importacoes (
 );
 
 -- Bloqueia a API pública do Supabase (anon/authenticated). O bot conecta como postgres e ignora RLS.
-alter table assinantes enable row level security;
-alter table vinculos enable row level security;
-alter table codigos_verificacao enable row level security;
-alter table pedidos_codigo enable row level security;
-alter table eventos enable row level security;
-alter table importacoes enable row level security;
+alter table associados.assinantes enable row level security;
+alter table associados.vinculos enable row level security;
+alter table associados.codigos_verificacao enable row level security;
+alter table associados.pedidos_codigo enable row level security;
+alter table associados.eventos enable row level security;
+alter table associados.importacoes enable row level security;

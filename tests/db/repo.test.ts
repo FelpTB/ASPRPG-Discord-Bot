@@ -14,7 +14,7 @@ beforeAll(async () => {
 }, 60_000);
 afterAll(async () => banco?.fechar());
 beforeEach(async () => {
-  await banco.sql`truncate assinantes, vinculos, codigos_verificacao, pedidos_codigo, eventos, importacoes`;
+  await banco.sql`truncate associados.assinantes, associados.vinculos, associados.codigos_verificacao, associados.pedidos_codigo, associados.eventos, associados.importacoes`;
 });
 
 const assinante = (h: string, status: 'ATIVA' | 'INATIVA' = 'ATIVA') => ({
@@ -29,6 +29,35 @@ const meta = { adminId: 'adm', total: 2, ativos: 2, novos: 2, inativados: 0 };
 describe('repo', () => {
   it('migrar é idempotente (segunda execução aplica 0 arquivos)', async () => {
     await expect(migrar(banco.sql, 'supabase/migrations')).resolves.toBe(0);
+  });
+
+  it('todas as tabelas ficam no schema associados; nada é criado em public', async () => {
+    const tabelas = await banco.sql<{ table_schema: string; table_name: string }[]>`
+      select table_schema, table_name from information_schema.tables
+      where table_type = 'BASE TABLE' and table_schema in ('public', 'associados')
+      order by table_name`;
+    expect(tabelas.filter((t) => t.table_schema === 'public')).toEqual([]);
+    expect(tabelas.map((t) => t.table_name)).toEqual([
+      '_migracoes',
+      'assinantes',
+      'codigos_verificacao',
+      'eventos',
+      'importacoes',
+      'pedidos_codigo',
+      'vinculos',
+    ]);
+  });
+
+  it('convive com uma tabela homônima de outro projeto em public sem tocá-la', async () => {
+    await banco.sql`create table public.eventos (rpg text)`;
+    try {
+      await banco.sql`insert into public.eventos values ('sessão de sábado')`;
+      await repo.registrarEvento({ discordId: 'u1', tipo: 'CARGO_DADO', detalhe: 'teste' });
+      expect(await repo.listarEventos('u1', 10)).toHaveLength(1);
+      expect(await banco.sql`select rpg from public.eventos`).toEqual([{ rpg: 'sessão de sábado' }]);
+    } finally {
+      await banco.sql`drop table public.eventos`;
+    }
   });
 
   it('upsertAssinantes grava, buscarAssinante encontra e segundo upsert atualiza status', async () => {

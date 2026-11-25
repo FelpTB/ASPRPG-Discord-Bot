@@ -37,7 +37,10 @@ Tempo estimado: 30–45 minutos.
 2. Clique em **Connect** (topo da página) → **Session pooler** e copie a URI. Ela tem a forma:
    `postgresql://postgres.<ref>:<SENHA>@aws-0-sa-east-1.pooler.supabase.com:5432/postgres`
    Troque `<SENHA>` pela senha do banco. Essa URI vai em `DATABASE_URL`.
-3. Não é preciso criar tabelas: o bot cria tudo sozinho na primeira vez que sobe.
+3. Não é preciso criar tabelas: o bot cria tudo sozinho na primeira vez que sobe, dentro do schema
+   **`associados`** (no Table Editor, troque o seletor de schema de `public` para `associados` para ver).
+   Por isso dá para reaproveitar o Supabase de outro projeto: o bot não cria nem altera nada em `public`.
+   Para remover tudo do bot depois: `drop schema associados cascade;` no SQL Editor.
 
 ## 4. Chaves de criptografia
 

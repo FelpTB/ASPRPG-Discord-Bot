@@ -20,7 +20,7 @@ beforeAll(async () => {
 }, 60_000);
 afterAll(async () => banco?.fechar());
 beforeEach(async () => {
-  await banco.sql`truncate assinantes, vinculos, eventos, importacoes`;
+  await banco.sql`truncate associados.assinantes, associados.vinculos, associados.eventos, associados.importacoes`;
   await repo.upsertAssinantes(
     [
       {
