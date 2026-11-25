@@ -12,8 +12,7 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "check": "biome check . && tsc --noEmit",
-    "registrar": "tsx src/discord/registrar-comandos.ts",
-    "db:test": "docker run --rm -d --name pg-bot-teste -e POSTGRES_PASSWORD=teste -p 54329:5432 postgres:17-alpine"
+    "registrar": "tsx src/discord/registrar-comandos.ts"
   },
   "dependencies": {
     "csv-parse": "^7.0.3",
@@ -26,6 +25,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.9",
+    "@electric-sql/pglite": "^0.6.0",
+    "@electric-sql/pglite-socket": "^0.3.0",
     "@types/node": "^26.6.10",
     "@types/nodemailer": "^8.0.2",
     "tsx": "^4.23.15",
