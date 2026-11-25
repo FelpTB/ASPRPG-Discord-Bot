@@ -78,6 +78,21 @@ describe('verificador', () => {
     expect(enviados).toEqual([{ para: 'ativo@x.com', codigo: expect.stringMatching(/^\d{6}$/) }]);
   });
 
+  it('não espera o envio do e-mail (tempo de resposta não revela se o e-mail existe)', async () => {
+    const v = criarVerificador({
+      repo,
+      emailHmacKey: hmacKey,
+      mailer: { enviarCodigo: () => new Promise(() => {}) }, // SMTP que nunca responde
+      auditoria: auditoriaFake(),
+      aoVincular: async () => {},
+    });
+    const corrida = await Promise.race([
+      v.solicitar('u9', 'ativo@x.com'),
+      new Promise((r) => setTimeout(() => r('TRAVOU'), 1000)),
+    ]);
+    expect(corrida).toBe('ENVIADO_OU_SILENCIOSO');
+  });
+
   it('e-mail inválido', async () => {
     expect(await montar().v.solicitar('u1', 'abc')).toBe('EMAIL_INVALIDO');
   });

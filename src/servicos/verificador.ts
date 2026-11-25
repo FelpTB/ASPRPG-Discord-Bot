@@ -7,6 +7,7 @@ import {
   MAX_TENTATIVAS,
   VALIDADE_CODIGO_MS,
 } from '../dominio/verificacao.js';
+import { logger } from '../logger.js';
 import type { Auditoria, Mailer } from './portas.js';
 
 export type ResultadoSolicitacao = 'ENVIADO_OU_SILENCIOSO' | 'EMAIL_INVALIDO' | 'LIMITE_PEDIDOS';
@@ -52,7 +53,10 @@ export function criarVerificador(deps: {
         codigoHash: hashCodigo(codigo, discordId),
         expiraEm: new Date(t.getTime() + VALIDADE_CODIGO_MS),
       });
-      await deps.mailer.enviarCodigo(email, codigo);
+      // Sem await: o tempo de resposta não pode revelar se o e-mail está na base.
+      deps.mailer
+        .enviarCodigo(email, codigo)
+        .catch((e) => logger.error({ err: e, discordId }, 'Falha ao enviar código por e-mail'));
       return 'ENVIADO_OU_SILENCIOSO';
     },
 
