@@ -1,0 +1,6 @@
+Requisitos:
+
+A ideia é a seguinte, a associação Paulista de RPG possui uma página no Catarse, por meio desse Catarse algumas pessoas podem se inscrever para se tornarem Associados, esse associados são assinantes mensais que participam ativamente da comunidade e dos eventos da Associação.
+
+A associação pretende criar um servido no discord, esse servidor terá salas e benefícios que serão acessíveis apenas para associados, dessa maneira, precisam de um sistema para gerenciar a inscrição dos membros no discord, concedendo cargos especiais para Associados que estão registrados no catarse.
+
